@@ -81,6 +81,128 @@ Function Run-Action{
             WRite-Host "About to execute action on $($SelectedItems.Count) mailboxes..."
             Write-Host "About to run $Command"
         }
+        "List Quotas"   {
+            Write-host "Displaying Mailbox SIR and retention settings status"
+            $SelectedITems = $wpf.GridView.SelectedItems
+            Write-host "Displaying Mailbox Single Item Recovery and retention settings status for $($SelectedItems.count) items..."
+            $List = @()
+            $SelectedItems | Foreach {
+                $List += $_.primarySMTPAddress.tostring()
+            }
+            #$List = $List -join ","
+            Function Get-MailboxQuotas {
+                [CmdLetBinding()]
+                Param(
+                    [Parameter(Mandatory = $False, Position = 1)][string[]]$List
+                )
+                #Initiating stopwatch to measure the time it takes to retrieve mailboxes
+                $stopwatch = [system.diagnostics.stopwatch]::StartNew()
+
+                $QueryMailboxFeaturesStd = $List | get-mailbox | Select DisplayName,Database,*quota*
+                $QueryMailboxFeatures = @()
+                Foreach ($mailbox in $QueryMailboxFeaturesStd){
+                    $objTemp = $mailbox
+                    $objTemp | add-Member -NotePropertyName DatabaseProhibitSRQuota -NotePropertyValue $((Get-MailboxDatabase $($Mailbox.Database)).ProhibitSendReceiveQuota)
+                    $ObjTemp | Add-Member -NotePropertyName DatabaseSendQuota -NotePropertyValue $((Get-MailboxDatabase $($Mailbox.Database)).ProhibitSendQuota)
+                    $ObjTemp | Add-Member -NotePropertyName DatabaseWarningQuota -NotePropertyValue $((Get-MailboxDatabase $($Mailbox.Database)).IssueWarningQuota)
+                    $QueryMailboxFeatures += $objTemp
+                }
+                [System.Collections.IENumerable]$MailboxFeatures = @($QueryMailboxFeatures)
+                Write-host $($MailboxFeatures | ft | out-string)
+                
+                #Stopping stopwatch
+                $stopwatch.Stop()
+                $msg = "`n`nInstruction took $([math]::round($($StopWatch.Elapsed.TotalSeconds),2)) seconds ..."
+                Write-Host $msg
+                $msg = $null
+                $StopWatch = $null
+
+                #region Get-MailboxFeaturesView Form definition
+                # Load a WPF GUI from a XAML file build with Visual Studio
+                Add-Type -AssemblyName presentationframework, presentationcore
+                $wpf = @{ }
+                # NOTE: Either load from a XAML file or paste the XAML file content in a "Here String"
+                #$inputXML = Get-Content -Path ".\WPFGUIinTenLines\MainWindow.xaml"
+                $inputXML = @"
+                <Window x:Name="frmMbxQuotaStatus" x:Class="Get_CASMAilboxFeaturesWPF.MainWindow"
+                                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                        xmlns:local="clr-namespace:Get_CASMAilboxFeaturesWPF"
+                                        mc:Ignorable="d"
+                                        Title="Mailboxes Quotas settings status" Height="437.024" Width="872.145" ResizeMode="NoResize">
+                    <Grid>
+                        <DataGrid x:Name="DataGrid" HorizontalAlignment="Left" Height="326" Margin="10,10,-59,0" VerticalAlignment="Top" Width="844" IsReadOnly="True"/>
+                        <Button x:Name="btnClose" Content="Close" HorizontalAlignment="Left" Margin="748,352,0,0" VerticalAlignment="Top" Width="106" Height="46"/>
+                        <Button x:Name="btnClipboard" Content="Copy to clipboard" HorizontalAlignment="Left" Margin="10,352,0,0" VerticalAlignment="Top" Width="174" Height="46"/>
+
+                    </Grid>
+                </Window>   
+"@
+
+                $inputXMLClean = $inputXML -replace 'mc:Ignorable="d"','' -replace "x:N",'N' -replace 'x:Class=".*?"','' -replace 'd:DesignHeight="\d*?"','' -replace 'd:DesignWidth="\d*?"',''
+                [xml]$xaml = $inputXMLClean
+                $reader = New-Object System.Xml.XmlNodeReader $xaml
+                $tempform = [Windows.Markup.XamlReader]::Load($reader)
+                $namedNodes = $xaml.SelectNodes("//*[@*[contains(translate(name(.),'n','N'),'Name')]]")
+                $namedNodes | ForEach-Object {$wpf.Add($_.Name, $tempform.FindName($_.Name))}
+
+                #Get the form name to be used as parameter in functions external to form...
+                $FormName = $NamedNodes[0].Name
+
+
+                #Define events functions
+                #region Load, Draw (render) and closing form events
+                #Things to load when the WPF form is loaded aka in memory
+                $wpf.$FormName.Add_Loaded({
+                    #Update-Cmd
+                    $wpf.DataGrid.ItemsSource = $MailboxFeatures
+                })
+                #Things to load when the WPF form is rendered aka drawn on screen
+                $wpf.$FormName.Add_ContentRendered({
+                    #Update-Cmd
+                })
+                $wpf.$FormName.add_Closing({
+                    $msg = "Closed the MBX SIR and retention settings status list window"
+                    write-host $msg
+                })
+                $wpf.btnClipboard.add_Click({
+                    $CSVClip = $mailboxFeatures | ConvertTo-CSV -NoTypeInformation
+                    $CSVClip | clip.exe
+                    $title = "Copied !"
+                    $msg = "Data copied to the clipboard ! `n`rUse CTRL+V on Notepad or on Excel !"
+                    [System.Windows.MessageBox]::Show($msg,$title, "OK","Asterisk")
+                })
+                $wpf.btnClose.add_Click({
+                    $wpf.$FormName.Close()
+                })
+
+                #endregion Load, Draw and closing form events
+                #End of load, draw and closing form events
+
+                #HINT: to update progress bar and/or label during WPF Form treatment, add the following:
+                # ... to re-draw the form and then show updated controls in realtime ...
+                $wpf.$FormName.Dispatcher.Invoke("Render",[action][scriptblock]{})
+
+
+                # Load the form:
+                # Older way >>>>> $wpf.MyFormName.ShowDialog() | Out-Null >>>>> generates crash if run multiple times
+                # Newer way >>>>> avoiding crashes after a couple of launches in PowerShell...
+                # USing method from https://gist.github.com/altrive/6227237 to avoid crashing Powershell after we re-run the script after some inactivity time or if we run it several times consecutively...
+                $async = $wpf.$FormName.Dispatcher.InvokeAsync({
+                    $wpf.$FormName.ShowDialog() | Out-Null
+                })
+                $async.Wait() | Out-Null
+
+                #endregion
+                # end of Form definition for Get-MailboxFeaturesView
+                
+            }
+
+            Get-MailboxQuotas $List            
+
+        }
         "List Single Item Recovery status" {
             Write-host "Displaying Mailbox SIR and retention settings status"
             $SelectedITems = $wpf.GridView.SelectedItems
@@ -445,6 +567,7 @@ $inputXML = @"
             </ComboBox.Effect>
             <ComboBoxItem Content="List Mailbox Features"/>
             <ComboBoxItem Content="List Single Item Recovery status"/>
+            <ComboBoxItem Content="List Quotas"/>
             <ComboBoxItem Content="Disable Mailbox"/>
         </ComboBox>
         <Label x:Name="lblNbItemsInGrid" Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="506,400,0,0" Width="66"/>
