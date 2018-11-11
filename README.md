@@ -9,7 +9,7 @@ Requires to be run from a PowerShell console with Exchange tools loaded, which c
 *[How To–Load Exchange Management Shell into PowerShell ISE](https://blogs.technet.microsoft.com/samdrey/2017/12/17/how-to-load-exchange-management-shell-into-powershell-ise-2/)
 
 
-## Screenshots (to start)
+## Screenshots - because a picture is worth 1000 words...
 
 ### First window when launching the tool
 ![screenshot1](DocResources/image0.jpg)
