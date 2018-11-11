@@ -26,14 +26,19 @@ Requires to be run from a PowerShell console with Exchange tools loaded, which c
 ### Selecting mailboxes in the grid, notice the "Action on selected" button that becomes active
 ![screenshot4](DocResources/image-SelectForAction.jpg)
 
-### After selecting some mailboxes in the grid, calling the "List Mailbox Features" action in the drop-down list
+### Action : After selecting some mailboxes in the grid, calling the "List Mailbox Features" action in the drop-down list
 ![screenshot5](DocResources/image-Action-ListMbxFeatures.jpg)
 
-### Anoter action possible, calling the Single Item Recovery and mailbox dumpster limits for the selected mailboxes
+### Action: Anoter action possible, calling the Single Item Recovery and mailbox dumpster limits for the selected mailboxes
 ![screenshot6](DocResources/image-Action-SingleItemRecoveryStatus.jpg)
 
+### Action: List mailbox quotas, including database quota for each mailbox
+*Note that mailbox quotas list include the Database info quota - that is useful when mailboxes are configure to use Mailbox Database Quotas*
+![screenshot7](DocResources/image-Action-ListMailboxQuotas.jpg)
+
+
 ### On most actions, you can copy the list in Windows clipboard (will be CSV Formatted) for further analyis, reporting or documentation about your mailboxes
-![screenshot7](DocResources/image-copyToClipBoard.jpg)
+![screenshot8](DocResources/image-copyToClipBoard.jpg)
 
 ### More to come...
 
