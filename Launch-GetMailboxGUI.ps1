@@ -95,9 +95,19 @@ Function Run-Action{
                 Param(
                     [Parameter(Mandatory = $False, Position = 1)][string[]]$List
                 )
+                #Initiating stopwatch to measure the time it takes to retrieve mailboxes
+                $stopwatch = [system.diagnostics.stopwatch]::StartNew()
+
                 $QueryMailboxFeatures = $List | Get-Mailbox | Select DisplayName, *item*
                 [System.Collections.IENumerable]$MailboxFeatures = @($QueryMailboxFeatures)
                 Write-host $($MailboxFeatures | ft | out-string)
+                
+                #Stopping stopwatch
+                $stopwatch.Stop()
+                $msg = "`n`nInstruction took $([math]::round($($StopWatch.Elapsed.TotalSeconds),2)) seconds to retrieve $($Mailboxes.count) mailboxes..."
+                Write-Host $msg
+                $msg = $null
+                $StopWatch = $null
 
                 #region Get-MailboxFeaturesView Form definition
                 # Load a WPF GUI from a XAML file build with Visual Studio
@@ -198,9 +208,20 @@ Function Run-Action{
                 Param(
                     [Parameter(Mandatory = $False, Position = 1)][string[]]$List
                 )
+
+                #Initiating stopwatch to measure the time it takes to retrieve mailboxes
+                $stopwatch = [system.diagnostics.stopwatch]::StartNew()
+
                 $QueryMailboxFeatures = $List | Get-CASMAilbox | Select DisplayName, *enabled, *MAPIblock*
                 [System.Collections.IENumerable]$MailboxFeatures = @($QueryMailboxFeatures)
                 Write-host $($MailboxFeatures | ft DisplayName, ActiveSyncEnabled,OWAEnabled,ECPEnabled,MAPIEnabled,MAPIBlockOutlookRpcHttp,MapiHttpEnabled  -a | out-string)
+
+                #Stopping stopwatch
+                $stopwatch.Stop()
+                $msg = "`n`nInstruction took $([math]::round($($StopWatch.Elapsed.TotalSeconds),2)) seconds to retrieve $($Mailboxes.count) mailboxes..."
+                Write-Host $msg
+                $msg = $null
+                $StopWatch = $null
 
                 #region Get-MailboxFeaturesView Form definition
                 # Load a WPF GUI from a XAML file build with Visual Studio
@@ -318,29 +339,30 @@ Function Update-MainCommandLine {
     } Else {
         $SearchSubstring = ("*") + ($wpf.txtMailboxString.text) + ("*")
     }
+    If ($wpf.chkUnlimited.IsChecked){
+        $ResultSize = "Unlimited"
+    } Else {
+        $ResultSize = $wpf.txtResultSize.Text
+    }
     $chkIncludeDiscovery = $false
     If ($chkIncludeDiscovery){
-        $commandLine = "Get-Mailbox -ResultSize $($wpf.txtResultSize.Text) -Identity $SearchSubstring -ErrorAction Stop | Select Name,Alias,DisplayName,primarySMTPAddress"
+        $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -ErrorAction Stop | Select Name,Alias,DisplayName,primarySMTPAddress"
     } Else {
-        $commandLine = "Get-Mailbox -ResultSize $($wpf.txtResultSize.Text) -Identity $SearchSubstring -Filter {RecipientTypeDetails -ne `"DiscoveryMailbox`"} -ErrorAction Stop | Select Name,Alias,DisplayName,primarySMTPAddress"
+        $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -Filter {RecipientTypeDetails -ne `"DiscoveryMailbox`"} -ErrorAction Stop | Select Name,Alias,DisplayName,primarySMTPAddress"
     }
     $wpf.txtMainCommand.Text = $CommandLine
 }
 Function Get-Mailboxes {
     If ($([int]$wpf.txtResultSize.Text) -gt 1000) {Write-Host "$($wpf.txtResultSize.Text) is greater than 1000 ..."} Else {write-host "$($wpf.txtResultSize.Text) is less than 1000"}
-    If ($([int]$wpf.txtResultSize.Text) -gt 1000){
-        # $Msg = "WARNING: You specified more than 1000 or Unlimited, mailbox collection can take a LOT of time, Continue ? (Y/N)"
-        # $Answer = ""
-        # while ($Answer -ne "Y" -AND $Answer -ne "N") {
-        #     cls
-        #     Write-Host $Msg -BackgroundColor Yellow -ForegroundColor Red
-        #     $Answer = Read-host
-        #     If($Answer -eq "N"){Return}
-        # }
-
+    If ($([int]$wpf.txtResultSize.Text) -gt 1000 -or $wpf.chkUnlimited.IsChecked){
         # Option #4 - a message, a title, buttons, and an icon
         # More info : https://msdn.microsoft.com/en-us/library/system.windows.messageboximage.aspx
-        $msg = "WARNING: You specified : $($wpf.txtResultSize.Text), which is more than 1000 or Unlimited, mailbox collection can take a LOT of time, Continue ? (Y/N)"
+        if ($wpf.chkUnlimited.IsChecked) {
+            $Specified = $wpf.chkUnlimited.Content
+        } Else {
+            $Specified = "$($wpf.txtResultSize.Text), which is more than 1000"
+        }
+        $msg = "WARNING: You specified -> $Specified <- for the Resultsize, mailbox collection can take a LOT of time, Continue ? (Y/N)"
         $Title = "Question..."
         $Button = "YesNo"
         $Icon = "Question"
@@ -424,10 +446,10 @@ $inputXML = @"
         <Label Content="Number of Items in Grid:" HorizontalAlignment="Left" Margin="353,400,0,0" VerticalAlignment="Top" Width="148"/>
         <Label Content="Selected:" HorizontalAlignment="Left" Margin="591,400,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblNumberItemsSelected" Content="0" HorizontalAlignment="Left" Margin="650,400,0,0" VerticalAlignment="Top" Width="67"/>
-        <TextBox x:Name="txtResultSize" HorizontalAlignment="Left" Height="23" Margin="224,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="124" Text="100"/>
+        <TextBox x:Name="txtResultSize" HorizontalAlignment="Left" Height="23" Margin="224,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="124" Text="100"/>
         <TextBlock HorizontalAlignment="Left" Margin="95,95,0,0" TextWrapping="Wrap" Text="ResultSize (aka Nb of mailboxes to display):" VerticalAlignment="Top" Width="124"/>
         <Label Content="Status:" HorizontalAlignment="Left" Margin="0,447,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtMainCommand" HorizontalAlignment="Left" Height="132" Margin="10,169,0,0" TextWrapping="Wrap" Text="Get-Mailbox command to be run..." VerticalAlignment="Top" Width="338" IsReadOnly="True"/>
+        <TextBox x:Name="txtMainCommand" HorizontalAlignment="Left" Height="132" Margin="10,200,0,0" TextWrapping="Wrap" Text="Get-Mailbox command to be run..." VerticalAlignment="Top" Width="338" IsReadOnly="True"/>
         <Rectangle HorizontalAlignment="Left" Height="26" Margin="353,400,0,0" VerticalAlignment="Top" Width="232">
             <Rectangle.Stroke>
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
@@ -438,7 +460,8 @@ $inputXML = @"
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
             </Rectangle.Stroke>
         </Rectangle>
-        <Label Content="The command run when clicking on the Search button is:" HorizontalAlignment="Left" Margin="10,143,0,0" VerticalAlignment="Top" Width="338" FontStyle="Italic"/>
+        <Label Content="The command run when clicking on the Search button is:" HorizontalAlignment="Left" Margin="10,174,0,0" VerticalAlignment="Top" Width="338" FontStyle="Italic"/>
+        <CheckBox x:Name="chkUnlimited" Content="Unlimited" HorizontalAlignment="Left" Margin="223,126,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
@@ -508,11 +531,22 @@ $wpf.GridView.add_SelectionChanged({
     }
     $wpf.lblNumberItemsSelected.Content = $Selected
 })
+
 $wpf.txtMailboxString.add_TextChanged({
     Update-MainCommandLine
 })
+
 $wpf.txtResultSize.add_TextChanged({
     Update-MainCommandLine
+})
+
+$wpf.chkUnlimited.add_Click({
+    Update-MainCommandLine
+    If ($wpf.chkUnlimited.IsChecked){
+        $wpf.txtResultSize.IsEnabled = $false
+    } Else {
+        $wpf.txtResultSize.IsEnabled = $true
+    }
 })
 #End of Text Changed events
 #endregion
