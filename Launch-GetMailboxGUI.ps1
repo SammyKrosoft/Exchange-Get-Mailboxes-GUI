@@ -131,7 +131,7 @@ Function Run-Action{
                                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                         xmlns:local="clr-namespace:Get_CASMAilboxFeaturesWPF"
                                         mc:Ignorable="d"
-                                        Title="Mailboxes Quotas settings status" Height="437.024" Width="872.145" ResizeMode="NoResize">
+                                        Title="Mailboxes Quotas settings status" Height="450" Width="872.145" ResizeMode="NoResize">
                     <Grid>
                         <DataGrid x:Name="DataGrid" HorizontalAlignment="Left" Height="326" Margin="10,10,-59,0" VerticalAlignment="Top" Width="844" IsReadOnly="True"/>
                         <Button x:Name="btnClose" Content="Close" HorizontalAlignment="Left" Margin="748,352,0,0" VerticalAlignment="Top" Width="106" Height="46"/>
@@ -245,7 +245,7 @@ Function Run-Action{
                                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                         xmlns:local="clr-namespace:Get_CASMAilboxFeaturesWPF"
                                         mc:Ignorable="d"
-                                        Title="Mailboxes Single Item Recovery and Retention settings status" Height="437.024" Width="872.145" ResizeMode="NoResize">
+                                        Title="Mailboxes Single Item Recovery and Retention settings status" Height="450" Width="872.145" ResizeMode="NoResize">
                     <Grid>
                         <DataGrid x:Name="DataGridCASMbx" HorizontalAlignment="Left" Height="326" Margin="10,10,-59,0" VerticalAlignment="Top" Width="844" IsReadOnly="True"/>
                         <Button x:Name="btnClose" Content="Close" HorizontalAlignment="Left" Margin="748,352,0,0" VerticalAlignment="Top" Width="106" Height="46"/>
@@ -359,7 +359,7 @@ Function Run-Action{
                                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                         xmlns:local="clr-namespace:Get_CASMAilboxFeaturesWPF"
                                         mc:Ignorable="d"
-                                        Title="Mailbox features enabled and blocked status" Height="437.024" Width="872.145" ResizeMode="NoResize">
+                                        Title="Mailbox features enabled and blocked status" Height="450" Width="872.145" ResizeMode="NoResize">
                     <Grid>
                         <DataGrid x:Name="DataGridCASMbx" HorizontalAlignment="Left" Height="326" Margin="10,10,-59,0" VerticalAlignment="Top" Width="844" IsReadOnly="True"/>
                         <Button x:Name="btnClose" Content="Close" HorizontalAlignment="Left" Margin="748,352,0,0" VerticalAlignment="Top" Width="106" Height="46"/>
