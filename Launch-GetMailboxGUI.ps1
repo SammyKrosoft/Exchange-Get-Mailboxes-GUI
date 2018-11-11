@@ -104,7 +104,7 @@ Function Run-Action{
                 
                 #Stopping stopwatch
                 $stopwatch.Stop()
-                $msg = "`n`nInstruction took $([math]::round($($StopWatch.Elapsed.TotalSeconds),2)) seconds to retrieve $($Mailboxes.count) mailboxes..."
+                $msg = "`n`nInstruction took $([math]::round($($StopWatch.Elapsed.TotalSeconds),2)) seconds ..."
                 Write-Host $msg
                 $msg = $null
                 $StopWatch = $null
@@ -218,7 +218,7 @@ Function Run-Action{
 
                 #Stopping stopwatch
                 $stopwatch.Stop()
-                $msg = "`n`nInstruction took $([math]::round($($StopWatch.Elapsed.TotalSeconds),2)) seconds to retrieve $($Mailboxes.count) mailboxes..."
+                $msg = "`n`nInstruction took $([math]::round($($StopWatch.Elapsed.TotalSeconds),2)) seconds..."
                 Write-Host $msg
                 $msg = $null
                 $StopWatch = $null
@@ -353,7 +353,12 @@ Function Update-MainCommandLine {
     $wpf.txtMainCommand.Text = $CommandLine
 }
 Function Get-Mailboxes {
-    If ($([int]$wpf.txtResultSize.Text) -gt 1000) {Write-Host "$($wpf.txtResultSize.Text) is greater than 1000 ..."} Else {write-host "$($wpf.txtResultSize.Text) is less than 1000"}
+    If ($wpf.chkUnlimited.IsChecked){
+        Write-host "Unlimited specified ... ignoring Resultsize number..."
+    } Else {
+        If ($([int]$wpf.txtResultSize.Text) -gt 1000) {Write-Host "$($wpf.txtResultSize.Text) is greater than 1000 ..."} Else {write-host "$($wpf.txtResultSize.Text) is less than 1000"}
+    }
+
     If ($([int]$wpf.txtResultSize.Text) -gt 1000 -or $wpf.chkUnlimited.IsChecked){
         # Option #4 - a message, a title, buttons, and an icon
         # More info : https://msdn.microsoft.com/en-us/library/system.windows.messageboximage.aspx
