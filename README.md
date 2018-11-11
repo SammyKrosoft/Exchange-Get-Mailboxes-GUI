@@ -19,8 +19,9 @@ This powershell app requires Powershell V3, and also requires to be run from a P
 ### After a sample Get-Mailbox which name includes "user" string
 ![screenshot2](DocResources/image1.jpg)
 
-### If you select "Unlimited" for the Resultsize (max number of mailboxes to search) that is greater than 1000, you get a warning asking you if you want to continue
+### If you select "Unlimited" under the Resultsize (max number of mailboxes to search), or a number that is greater than 1000, you get a warning asking you if you want to continue
 ![screenshot3](DocResources/image-Question-LotsOfItems.jpg)
+![screenshot3.1](DocResources/image-Question-LotsOfItems2.jpg)
 
 ### Selecting mailboxes in the grid, notice the "Action on selected" button that becomes active
 ![screenshot4](DocResources/image-SelectForAction.jpg)
