@@ -1,11 +1,10 @@
 # Exchange-Get-Mailboxes-GUI
-GUI to search mailboxes in an Exchange 2010, 2013, 2016 or Exchange Online (O365) environments
+GUI to search mailboxes in an Exchange 2010, 2013, 2016, 2019 or Exchange Online (O365) environments
 
-## Important note
+## Important notes
+This powershell app requires Powershell V3, and also requires to be run from a PowerShell console with Exchange tools loaded, which can be an Exchange Management Shell window or a Powershell window from where you imported an Exchange session, see my TechNet blog post for a summary on how to do this (*right-click => Open in a new tab otherwise below sites will load instead of this page*):
 
-Requires to be run from a PowerShell console with Exchange tools loaded, which can be an Exchange Management Shell window or a Powershell window from where you imported an Exchange session, see my TechNet blog post for a summary on how to do this:
-
-* [How-to – Load Remote Exchange PowerShell Session on Exchange 2010, 2013, 2016, Exchange Online (O365) – which ports do you need](https://blogs.technet.microsoft.com/samdrey/2018/04/06/how-to-load-remote-powershell-session-on-exchange-2010-2013-2016-exchange-online-o365-2/){:target="_blank"}
+* [How-to – Load Remote Exchange PowerShell Session on Exchange 2010, 2013, 2016, Exchange Online (O365) – which ports do you need](https://blogs.technet.microsoft.com/samdrey/2018/04/06/how-to-load-remote-powershell-session-on-exchange-2010-2013-2016-exchange-online-o365-2/)
 
 * [Connect to Office 365 PowerShell](https://docs.microsoft.com/en-us/office365/enterprise/powershell/connect-to-office-365-powershell)
 
@@ -20,8 +19,9 @@ Requires to be run from a PowerShell console with Exchange tools loaded, which c
 ### After a sample Get-Mailbox which name includes "user" string
 ![screenshot2](DocResources/image1.jpg)
 
-### If you select "Unlimited" for the Resultsize (max number of mailboxes to search) that is greater than 1000, you get a warning asking you if you want to continue
+### If you select "Unlimited" under the Resultsize (max number of mailboxes to search), or a number that is greater than 1000, you get a warning asking you if you want to continue
 ![screenshot3](DocResources/image-Question-LotsOfItems.jpg)
+![screenshot3.1](DocResources/image-Question-LotsOfItems2.jpg)
 
 ### Selecting mailboxes in the grid, notice the "Action on selected" button that becomes active
 ![screenshot4](DocResources/image-SelectForAction.jpg)
