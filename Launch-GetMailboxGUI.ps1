@@ -489,6 +489,7 @@ Function Update-MainCommandLine {
 }
 
 $lblabout_Click = {
+    $Language = "EN"
     switch ($Language)
     {
         "EN"
