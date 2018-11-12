@@ -481,9 +481,9 @@ Function Update-MainCommandLine {
     }
     $chkIncludeDiscovery = $false
     If ($chkIncludeDiscovery){
-        $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -ErrorAction Stop | Select Name,Alias,DisplayName,primarySMTPAddress"
+        $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -ErrorAction Stop"
     } Else {
-        $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -Filter {RecipientTypeDetails -ne `"DiscoveryMailbox`"} -ErrorAction Stop | Select Name,Alias,DisplayName,primarySMTPAddress"
+        $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -Filter {RecipientTypeDetails -ne `"DiscoveryMailbox`"} -ErrorAction Stop"
     }
     $wpf.txtMainCommand.Text = $CommandLine
 }
@@ -516,6 +516,16 @@ Function Get-Mailboxes {
         $commandLine = $wpf.txtMainCommand.text
         #Invoking the command line and storing in a variable
         $Mailboxes = invoke-expression $CommandLine
+        $NewMailboxesObj = @()
+        Foreach ($objTemp in $Mailboxes){
+            If ($($objTemp.OrganizationalUnit) -match "prod.outlook.com"){
+                $objtemp | Add-Member -NotePropertyName Location -NotePropertyValue "Cloud"
+            } Else {
+                $objtemp | Add-Member -NotePropertyName Location -NotePropertyValue "On-prem"
+            }
+            $NewMailboxesObj += $objtemp
+        }
+        $Mailboxes =  $NewMailboxesObj | Select Name,Alias,DisplayName,primarySMTPAddress,Location
         #Stopping stopwatch
         $stopwatch.Stop()
         $msg = "`n`nInstruction took $([math]::round($($StopWatch.Elapsed.TotalSeconds),2)) seconds to retrieve $($Mailboxes.count) mailboxes..."
