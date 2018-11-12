@@ -646,6 +646,7 @@ $inputXML = @"
         </Rectangle>
         <Label Content="The command run when clicking on the Search button is:" HorizontalAlignment="Left" Margin="10,174,0,0" VerticalAlignment="Top" Width="338" FontStyle="Italic"/>
         <CheckBox x:Name="chkUnlimited" Content="Unlimited" HorizontalAlignment="Left" Margin="223,126,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblAbout" Content="." HorizontalAlignment="Left" Margin="772,10,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
