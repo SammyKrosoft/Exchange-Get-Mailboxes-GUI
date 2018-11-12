@@ -98,13 +98,26 @@ Function Run-Action{
                 #Initiating stopwatch to measure the time it takes to retrieve mailboxes
                 $stopwatch = [system.diagnostics.stopwatch]::StartNew()
 
-                $QueryMailboxFeaturesStd = $List | get-mailbox | Select DisplayName,Database,*quota*
+                $QueryMailboxFeaturesStd = $List | get-mailbox | Select DisplayName,Database,*quota*,OrganizationalUnit
                 $QueryMailboxFeatures = @()
                 Foreach ($mailbox in $QueryMailboxFeaturesStd){
                     $objTemp = $mailbox
-                    $objTemp | add-Member -NotePropertyName DatabaseProhibitSRQuota -NotePropertyValue $((Get-MailboxDatabase $($Mailbox.Database)).ProhibitSendReceiveQuota)
-                    $ObjTemp | Add-Member -NotePropertyName DatabaseSendQuota -NotePropertyValue $((Get-MailboxDatabase $($Mailbox.Database)).ProhibitSendQuota)
-                    $ObjTemp | Add-Member -NotePropertyName DatabaseWarningQuota -NotePropertyValue $((Get-MailboxDatabase $($Mailbox.Database)).IssueWarningQuota)
+                    if ($($objTemp.OrganizationalUnit) -match "prod.outlook.com"){
+                        $CloudMailbox = $True
+                    }else{
+                        $CloudMailbox = $false
+                    }
+                    #<optional> - Removing OrganizationalUnit information ...
+                    $ObjTemp = $ObjTemp | Select DisplayName,Database,*quota*
+                    if ($CloudMailbox){
+                        $objTemp | add-Member -NotePropertyName DatabaseProhibitSRQuota -NotePropertyValue "Cloud mailbox (no DB Quota info)"
+                        $ObjTemp | Add-Member -NotePropertyName DatabaseSendQuota -NotePropertyValue "Cloud mailbox (no DB Quota info)"
+                        $ObjTemp | Add-Member -NotePropertyName DatabaseWarningQuota -NotePropertyValue "Cloud mailbox (no DB Quota info)"
+                    } Else {
+                        $objTemp | add-Member -NotePropertyName DatabaseProhibitSRQuota -NotePropertyValue $((Get-MailboxDatabase $($Mailbox.Database)).ProhibitSendReceiveQuota)
+                        $ObjTemp | Add-Member -NotePropertyName DatabaseSendQuota -NotePropertyValue $((Get-MailboxDatabase $($Mailbox.Database)).ProhibitSendQuota)
+                        $ObjTemp | Add-Member -NotePropertyName DatabaseWarningQuota -NotePropertyValue $((Get-MailboxDatabase $($Mailbox.Database)).IssueWarningQuota)
+                    }
                     $QueryMailboxFeatures += $objTemp
                 }
                 [System.Collections.IENumerable]$MailboxFeatures = @($QueryMailboxFeatures)
