@@ -1,5 +1,20 @@
 # Exchange-Get-Mailboxes-GUI
-GUI to search mailboxes in an Exchange 2010, 2013, 2016, 2019 or Exchange Online (O365) environments
+Here is a GUI to get mailboxes information in an Exchange 2010, 2013, 2016, 2019 and/or Exchange Online (O365) environments.
+
+## Principle
+For this GUI, I designed the interface using Windows Presentation Foundation, which is the next generation of Windows Forms, and which enables anyone to design Windows interfaces for underlying programs, to help users to get the most from computer programs.
+
+Here's the principle used to create this Powershell application using WPF:
+* First, I designed the Windows Presentation Foundation forms using Visual Studio 2017 Community Edition (which is free), and pasted the generated XAML code from Visual Studio 2007 into a PowerShell script - in this script I pasted directly the XAML code into a PowerShell "here-string", but you can load the XAML code from a separate file using Get-Content for example, that way if you want to change your Windows WPF form design, you just have to modify or paste the new code from Visual Studio directly into that separate file and leave your .ps1 script alone.
+* then with a PowerShell code snippet I parsed the XAML code to get the form objects that PowerShell understands - buttons, check boxes, datagrids, labels, text blocks used as inputs as well as outputs sometimes (to put the PowerShell commands corresponding to the users input for example), and the form object itself, which is the container of all the other objects (buttons, checkboxes, etc...)
+* and finally I wrote the functions behind the form that I want to run when the form loads, when we click the buttons, when we check or uncheck the checkboxes, when we change the text in text boxes, or when we select items from datagrids => for code to execute when the user interacts with Windows WPF forms, we must use the WPF form object's "events" (add_click, add_textChanged, add_loaded, add_closing, etc...) => you can retrieve Windows WPF form objects on the MSDN, or simply on Visual Studio 2017 when you design your form (switch from object properties to the object events to view all available events for a selected object)
+
+It's pretty straightforward to write PowerShell WPF applications if we have in mind how to structure the program:
+1- design the form in Visual Studio 2017 (or manually but it's too complicated for me, hence the choice to use VS)
+2- paste the generated XAML code in your PowerShell program, on a placeholder where you pre-populated a PowerShell code to parse the XAML code to generate PowerShell-understandable objects
+2- write the functions you want to execute behind the form
+3- write the form events (these are similar to small functions, to tell the form what to do when user clicks a button, or when user start typing text in boxes, or when use checks a box, or selects an item in a datagrid or in a list box, etc..) and call the functions from these form events.
+
 
 ## Important notes
 This powershell app requires Powershell V3, and also requires to be run from a PowerShell console with Exchange tools loaded, which can be an Exchange Management Shell window or a Powershell window from where you imported an Exchange session, see my TechNet blog post for a summary on how to do this (*right-click => Open in a new tab otherwise below sites will load instead of this page*):
