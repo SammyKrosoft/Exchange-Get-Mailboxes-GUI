@@ -108,7 +108,7 @@ Function Run-Action{
                         $CloudMailbox = $false
                     }
                     #<optional> - Removing OrganizationalUnit information ...
-                    $ObjTemp = $ObjTemp | Select DisplayName,Database,*quota*
+                    $ObjTemp = $ObjTemp | Select DisplayName, Database, UseDatabaseQuotaDefaults, ProhibitSendQuota, ProhibitSendReceiveQuota, IssueWarningQuota, RulesQuota, CalendarLoggingQuota, RecoverableItemsQuota, RecoverableItemsWarningQuota, ArchiveQuota, ArchiveWarningQuota
                     if ($CloudMailbox){
                         $objTemp | add-Member -NotePropertyName DatabaseProhibitSRQuota -NotePropertyValue "Cloud mailbox (no DB Quota info)"
                         $ObjTemp | Add-Member -NotePropertyName DatabaseSendQuota -NotePropertyValue "Cloud mailbox (no DB Quota info)"
