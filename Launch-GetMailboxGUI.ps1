@@ -1,4 +1,4 @@
-$Version = "1"
+$Version = "0.9"
 #region FUNCTIONS other than Form events
 Function IsPSV3 {
     <#
@@ -487,6 +487,39 @@ Function Update-MainCommandLine {
     }
     $wpf.txtMainCommand.Text = $CommandLine
 }
+
+$lblabout_Click = {
+    switch ($Language)
+    {
+        "EN"
+        {
+            $systemst = "QXV0aG9yOiBTYW0gRHJleQ0Kc2FtZHJleUBtaWNyb3NvZnQuY29tDQpzYW1teUBob3RtYWlsLmZyDQpNaWNyb3NvZnQgRW`
+        5naW5lZXIgc2luY2UgT2N0IDE5OTkNCjE5OTktMjAwMDogUHJlc2FsZXMgRW5naW5lZXIgKEZyYW5jZSkNCjIwMDAtMjAwMzogU3VwcG9yd`
+        CBFbmdpbmVlciAoRnJhbmNlKQ0KMjAwMy0yMDA2OiB2ZXJ5IGZpcnN0IFBGRSBpbiBGcmFuY2UNCjIwMDYtMjAwOTogTUNTIENvbnN1bHRhb`
+        nQgKEZyYW5jZSkNCjIwMDktMjAxMDogVEFNIChGcmFuY2UpDQoyMDEwLW5vdyA6IENvbnN1bHRhbnQgKENhbmFkYSkNCk11c2ljaWFuLCBjb`
+        21wb3NlciAoS2V5Ym9hcmQsIEd1aXRhcikNClBsYW5lIHBpbG90IHNpbmNlIDE5OTUNCkZvciBTaGFyZWQgU2VydmljZXMgQ2FuYWRh"
+        } 
+        "FR"
+        {
+            $systemst = "QXV0ZXVyOiBTYW0gRHJleQ0Kc2FtZHJleUBtaWNyb3NvZnQuY29tDQpzYW1teUBob3RtYWlsLmZyDQpJbmfDqW5pZXVyIGNo`
+        ZXogTWljcm9zb2Z0IGRlcHVpcyBPY3QgMTk5OQ0KMTk5OS0yMDAwOiBJbmfDqW5pZXVyIEF2YW50LVZlbnRlIChGcmFuY2UpDQoyMDAwLTIwMD`
+        M6IFNww6ljaWFsaXN0ZSBUZWNobmlxdWUgKEZyYW5jZSkNCjIwMDMtMjAwNjogUHJlbWllciBQRkUgZW4gRnJhbmNlDQoyMDA2LTIwMDk6IENv`
+        bnN1bHRhbnQgTUNTIChGcmFuY2UpDQoyMDA5LTIwMTA6IFJlc3BvbnNhYmxlIFRlY2huaXF1ZSBkZSBDb21wdGUgKEZyYW5jZSkNCjIwMTAtMjA`
+        xNiA6IENvbnN1bHRhbnQgKENhbmFkYSkNCk11c2ljaWVuLCBjb21wb3NpdGV1ciAoQ2xhdmllciwgR3VpdGFyZSkNCkJyZXZldCBkZSBQaWxvdGU`
+        gUHJpdsOpIGRlcHVpcyAxOTk1DQpQb3VyIFNlcnZpY2VzIFBhcnRhZ8OpcyBDYW5hZGE="
+        }
+    }
+    $systemst = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($systemst))
+    # Option #4 - a message, a title, buttons, and an icon
+    # More info : https://msdn.microsoft.com/en-us/library/system.windows.messageboximage.aspx
+    $msg = $systemst
+    $Title = $wpf.$FormName.Title
+    $Button = "Ok"
+    $Icon = "Information"
+    [System.Windows.MessageBox]::Show($msg,$Title, $Button, $icon)
+}
+
+
 Function Get-Mailboxes {
     If ($wpf.chkUnlimited.IsChecked){
         Write-host "Unlimited specified ... ignoring Resultsize number..."
@@ -657,6 +690,7 @@ $wpf.btnAction.add_Click({
 $Wpf.$FormName.Add_Loaded({
     Ready-Label
     Update-MainCommandLine
+    $wpf.$FormName.Title += " - v$Version"
 })
 #Things to load when the WPF form is rendered aka drawn on screen
 $Wpf.$FormName.Add_ContentRendered({
@@ -666,6 +700,8 @@ $Wpf.$FormName.add_Closing({
     $msg = "bye bye !"
     write-host $msg
 })
+$wpf.lblAbout.Add_MouseLeftButtonDown($lblabout_Click)
+
 # End of load, draw and closing form events
 #endregion
 
