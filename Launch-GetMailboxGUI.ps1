@@ -1,4 +1,7 @@
-$Version = "0.9"
+$Version = "0.91"
+<#Version History
+v0.91 - Added ability to sort each columns in List quota action ...
+#>
 #region FUNCTIONS other than Form events
 Function IsPSV3 {
     <#
@@ -171,6 +174,9 @@ Function Run-Action{
                 $wpf.$FormName.Add_Loaded({
                     #Update-Cmd
                     $wpf.DataGrid.ItemsSource = $MailboxFeatures
+                    $wpf.DataGrid.Columns | Foreach {
+                        $_.CanUserSort = $true
+                    }            
                 })
                 #Things to load when the WPF form is rendered aka drawn on screen
                 $wpf.$FormName.Add_ContentRendered({
