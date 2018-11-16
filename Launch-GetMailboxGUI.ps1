@@ -1,5 +1,6 @@
-$Version = "0.91"
+$Version = "0.92"
 <#Version History
+v0.92 - Added Arbitration mailbox check box
 v0.91 - Added ability to sort each columns in List quota action ...
 #>
 #region FUNCTIONS other than Form events
@@ -475,21 +476,25 @@ Function Ready-Label{
 }
 
 Function Update-MainCommandLine {
-    If ($wpf.txtMailboxString.text -eq ""){
-        $SearchSubstring = ("*")
+    If ($wpf.chkArbitrationOnly.IsChecked){
+        $commandLine = "Get-Mailbox -ResultSize Unlimited -Arbitration -ErrorAction Stop"
     } Else {
-        $SearchSubstring = ("*") + ($wpf.txtMailboxString.text) + ("*")
-    }
-    If ($wpf.chkUnlimited.IsChecked){
-        $ResultSize = "Unlimited"
-    } Else {
-        $ResultSize = $wpf.txtResultSize.Text
-    }
-    $chkIncludeDiscovery = $false
-    If ($chkIncludeDiscovery){
-        $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -ErrorAction Stop"
-    } Else {
-        $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -Filter {RecipientTypeDetails -ne `"DiscoveryMailbox`"} -ErrorAction Stop"
+        If ($wpf.txtMailboxString.text -eq ""){
+            $SearchSubstring = ("*")
+        } Else {
+            $SearchSubstring = ("*") + ($wpf.txtMailboxString.text) + ("*")
+        }
+        If ($wpf.chkUnlimited.IsChecked){
+            $ResultSize = "Unlimited"
+        } Else {
+            $ResultSize = $wpf.txtResultSize.Text
+        }
+        $chkIncludeDiscovery = $false
+        If ($chkIncludeDiscovery){
+            $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -ErrorAction Stop"
+        } Else {
+            $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -Filter {RecipientTypeDetails -ne `"DiscoveryMailbox`"} -ErrorAction Stop"
+        }
     }
     $wpf.txtMainCommand.Text = $CommandLine
 }
@@ -654,6 +659,7 @@ $inputXML = @"
         <Label Content="The command run when clicking on the Search button is:" HorizontalAlignment="Left" Margin="10,174,0,0" VerticalAlignment="Top" Width="338" FontStyle="Italic"/>
         <CheckBox x:Name="chkUnlimited" Content="Unlimited" HorizontalAlignment="Left" Margin="223,126,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblAbout" Content="." HorizontalAlignment="Left" Margin="772,10,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="chkArbitrationOnly" Content="Arbitration only" HorizontalAlignment="Left" Margin="10,149,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
@@ -741,6 +747,19 @@ $wpf.chkUnlimited.add_Click({
         $wpf.txtResultSize.IsEnabled = $false
     } Else {
         $wpf.txtResultSize.IsEnabled = $true
+    }
+})
+
+$wpf.chkArbitrationOnly.add_Click({
+    Update-MainCommandLine
+    If ($Wpf.chkArbitrationOnly.IsChecked){
+        $wpf.txtMailboxString.IsEnabled = $false
+        $wpf.txtResultSize.IsEnabled = $false
+        $wpf.chkUnlimited = $false
+    } Else {
+        $wpf.txtMailboxString.IsEnabled = $true
+        $wpf.txtResultSize.IsEnabled = $true
+        $wpf.chkUnlimited = $true
     }
 })
 #End of Text Changed events
