@@ -1,5 +1,6 @@
-$Version = "0.92"
+$Version = "0.95"
 <#Version History
+v0.95 - fixed Arbitration mailbox SIR and Quota functions
 v0.92 - Added Arbitration mailbox check box
 v0.91 - Added ability to sort each columns in List quota action ...
 #>
@@ -72,6 +73,7 @@ Function Test-ExchTools(){
 Function Run-Action{
     $SelectedAction = $wpf.comboSelectAction.SelectedItem.Content
     Switch ($SelectedAction) {
+        #Region Disable Mailbox ***********************************************************
         "Disable Mailbox"  {
             Write-host "Displaying Info"
             Write-Host "Listing selected mailbox names:"
@@ -85,6 +87,9 @@ Function Run-Action{
             WRite-Host "About to execute action on $($SelectedItems.Count) mailboxes..."
             Write-Host "About to run $Command"
         }
+        #endregion
+        #End of the Disabled Mailbox region
+        #region List Quotas
         "List Quotas"   {
             Write-host "Displaying Mailbox SIR and retention settings status"
             $SelectedITems = $wpf.GridView.SelectedItems
@@ -97,12 +102,17 @@ Function Run-Action{
             Function Get-MailboxQuotas {
                 [CmdLetBinding()]
                 Param(
-                    [Parameter(Mandatory = $False, Position = 1)][string[]]$List
+                    [Parameter(Mandatory = $False, Position = 1)][string[]]$List,
+                    [Parameter(Mandatory = $False, Position = 2)][switch]$Arbitration
                 )
                 #Initiating stopwatch to measure the time it takes to retrieve mailboxes
                 $stopwatch = [system.diagnostics.stopwatch]::StartNew()
-
-                $QueryMailboxFeaturesStd = $List | get-mailbox | Select DisplayName,Database,*quota*,OrganizationalUnit
+                If ($Arbitration){
+                    $QueryMailboxFeaturesStd = $List | get-mailbox -Arbitration | Select DisplayName,Name,ServerName,Database,*quota*,OrganizationalUnit
+                } Else {
+                    $QueryMailboxFeaturesStd = $List | get-mailbox | Select DisplayName,Name,ServerName,Database,*quota*,OrganizationalUnit
+                }
+                
                 $QueryMailboxFeatures = @()
                 Foreach ($mailbox in $QueryMailboxFeaturesStd){
                     $objTemp = $mailbox
@@ -220,9 +230,15 @@ Function Run-Action{
                 
             }
 
-            Get-MailboxQuotas $List            
-
+            if ($wpf.chkArbitrationOnly.IsChecked){
+                Get-MailboxQuotas $List -Arbitration
+            } Else {
+                Get-MailboxQuotas $List
+            }
         }
+        #endregion
+        #End of the List Quotas region
+        #region Single Item Recovery Status
         "List Single Item Recovery status" {
             Write-host "Displaying Mailbox SIR and retention settings status"
             $SelectedITems = $wpf.GridView.SelectedItems
@@ -235,12 +251,16 @@ Function Run-Action{
             Function Get-MailboxSIRView {
                 [CmdLetBinding()]
                 Param(
-                    [Parameter(Mandatory = $False, Position = 1)][string[]]$List
+                    [Parameter(Mandatory = $False, Position = 1)][string[]]$List,
+                    [Parameter(Mandatory = $False, Position = 2)][switch]$Arbitration
                 )
                 #Initiating stopwatch to measure the time it takes to retrieve mailboxes
                 $stopwatch = [system.diagnostics.stopwatch]::StartNew()
-
-                $QueryMailboxFeatures = $List | Get-Mailbox | Select DisplayName, *item*
+                If ($Arbitration){
+                    $QueryMailboxFeatures = $List | get-mailbox -Arbitration | Select DisplayName,Name,*item*,OrganizationalUnit
+                } Else {
+                    $QueryMailboxFeatures = $List | Get-Mailbox | Select DisplayName,Name, *item*, OrganizationalUnit
+                }
                 [System.Collections.IENumerable]$MailboxFeatures = @($QueryMailboxFeatures)
                 Write-host $($MailboxFeatures | ft | out-string)
                 
@@ -334,9 +354,27 @@ Function Run-Action{
                 
             }
 
-            Get-MailboxSIRView $List            
+            If ($wpf.chkArbitrationOnly.IsChecked){
+                Get-MailboxSIRView $List -Arbitration
+            } Else {
+                Get-MailboxSIRView $List
+            }
+            
         }
+        #endregion
+        #End of the Single Item Recovery status region
+        #region List Mailbox Features
         "List Mailbox Features"  {
+            if ($wpf.chkArbitrationOnly.IsChecked){
+                # Option #4 - a message, a title, buttons, and an icon
+                # More info : https://msdn.microsoft.com/en-us/library/system.windows.messageboximage.aspx
+                $msg = "Arbitration mailboxes is checked - cannot get mailbox features for Arbitration mailboxes"
+                $Title = "Error - Arbitration mailboxes don't get features"
+                $Button = "Ok"
+                $Icon = "Error"
+                [System.Windows.MessageBox]::Show($msg,$Title, $Button, $icon)
+                Return
+            }
             Write-host "Displaying Mailbox Features"
             $SelectedITems = $wpf.GridView.SelectedItems
             Write-host "Displaying Mailbox Features for $($SelectedItems.count) items..."
@@ -449,6 +487,8 @@ Function Run-Action{
 
             Get-MailboxFeaturesView $List
         }
+        #endregion
+        #End of the List Mailbox Features region
     }
 }
 
@@ -755,11 +795,11 @@ $wpf.chkArbitrationOnly.add_Click({
     If ($Wpf.chkArbitrationOnly.IsChecked){
         $wpf.txtMailboxString.IsEnabled = $false
         $wpf.txtResultSize.IsEnabled = $false
-        $wpf.chkUnlimited = $false
+        $wpf.chkUnlimited.IsEnabled = $false
     } Else {
         $wpf.txtMailboxString.IsEnabled = $true
         $wpf.txtResultSize.IsEnabled = $true
-        $wpf.chkUnlimited = $true
+        $wpf.chkUnlimited.IsEnabled = $true
     }
 })
 #End of Text Changed events
