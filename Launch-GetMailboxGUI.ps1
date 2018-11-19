@@ -611,7 +611,7 @@ Function Get-Mailboxes {
             }
             $NewMailboxesObj += $objtemp
         }
-        $Mailboxes =  $NewMailboxesObj | Select Name,Alias,DisplayName,primarySMTPAddress,Location
+        $Mailboxes =  $NewMailboxesObj | Select Name,Alias,DisplayName,primarySMTPAddress,Location,ServerName,Database
         #Stopping stopwatch
         $stopwatch.Stop()
         $msg = "`n`nInstruction took $([math]::round($($StopWatch.Elapsed.TotalSeconds),2)) seconds to retrieve $($Mailboxes.count) mailboxes..."
