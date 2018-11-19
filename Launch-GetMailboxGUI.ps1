@@ -1,5 +1,6 @@
-$Version = "0.96"
+$Version = "0.97"
 <#Version History
+v0.97 - made window bigger - added Copy to Clipboard button for mailboxes list - added ServerName and database info
 v0.96 - added icon, made window a bit bigger
 v0.95 - fixed Arbitration mailbox SIR and Quota functions
 v0.92 - Added Arbitration mailbox check box
@@ -653,9 +654,9 @@ $inputXML = @"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GridView_WPF"
         mc:Ignorable="d"
-        Title="Search Mailboxes" Height="535.64" Width="1026.5" ResizeMode="NoResize">
+        Title="Search Mailboxes" Height="722.39" Width="1026.5" ResizeMode="NoResize">
     <Grid>
-        <DataGrid x:Name="GridView" HorizontalAlignment="Left" Height="385" Margin="353,10,0,0" VerticalAlignment="Top" Width="641"/>
+        <DataGrid x:Name="GridView" HorizontalAlignment="Left" Height="425" Margin="353,10,0,0" VerticalAlignment="Top" Width="641"/>
         <TextBox x:Name="txtMailboxString" HorizontalAlignment="Left" Height="23" Margin="10,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="338"/>
         <Label Content="Search for mailbox (substring of alias, e-mail address, &#xD;&#xA;display name, ...)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,11,0,0" Height="51" Width="302"/>
         <Button x:Name="btnRun" Content="Search" HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top" Width="75" Height="32">
@@ -663,14 +664,14 @@ $inputXML = @"
                 <DropShadowEffect/>
             </Button.Effect>
         </Button>
-        <Label x:Name="lblStatus" Content="Please start a search..." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,471,0,0" Width="1010" FontStyle="Italic" FontWeight="Bold">
+        <Label x:Name="lblStatus" Content="Ready !" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,658,0,0" Width="1010" FontStyle="Italic" FontWeight="Bold">
         </Label>
-        <Button x:Name="btnAction" Content="Action on selected" Margin="353,431,491.5,40" IsEnabled="False">
+        <Button x:Name="btnAction" Content="Run on selected" Margin="353,596,0,0" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Button.Effect>
                 <DropShadowEffect/>
             </Button.Effect>
         </Button>
-        <ComboBox x:Name="comboSelectAction" HorizontalAlignment="Left" Margin="549,431,0,0" VerticalAlignment="Top" Width="214" Height="36" SelectedIndex="0" IsEnabled="False" TextOptions.TextFormattingMode="Display" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+        <ComboBox x:Name="comboSelectAction" HorizontalAlignment="Left" Margin="353,534,0,0" VerticalAlignment="Top" Height="30" SelectedIndex="0" IsEnabled="False" TextOptions.TextFormattingMode="Display">
             <ComboBox.Effect>
                 <DropShadowEffect/>
             </ComboBox.Effect>
@@ -679,20 +680,20 @@ $inputXML = @"
             <ComboBoxItem Content="List Quotas"/>
             <ComboBoxItem Content="Disable Mailbox"/>
         </ComboBox>
-        <Label x:Name="lblNbItemsInGrid" Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="506,400,0,0" Width="66"/>
-        <Label Content="Number of Items in Grid:" HorizontalAlignment="Left" Margin="353,400,0,0" VerticalAlignment="Top" Width="148"/>
-        <Label Content="Selected:" HorizontalAlignment="Left" Margin="591,400,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="lblNumberItemsSelected" Content="0" HorizontalAlignment="Left" Margin="650,400,0,0" VerticalAlignment="Top" Width="67"/>
+        <Label x:Name="lblNbItemsInGrid" Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="506,440,0,0" Width="66"/>
+        <Label Content="Number of Items in Grid:" HorizontalAlignment="Left" Margin="353,440,0,0" VerticalAlignment="Top" Width="148"/>
+        <Label Content="Selected:" HorizontalAlignment="Left" Margin="353,471,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblNumberItemsSelected" Content="0" HorizontalAlignment="Left" Margin="460,471,0,0" VerticalAlignment="Top" Width="67"/>
         <TextBox x:Name="txtResultSize" HorizontalAlignment="Left" Height="23" Margin="224,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="124" Text="100"/>
         <TextBlock HorizontalAlignment="Left" Margin="95,95,0,0" TextWrapping="Wrap" Text="ResultSize (aka Nb of mailboxes to display):" VerticalAlignment="Top" Width="124"/>
-        <Label Content="Status:" HorizontalAlignment="Left" Margin="0,447,0,0" VerticalAlignment="Top"/>
+        <Label Content="Status:" HorizontalAlignment="Left" Margin="10,627,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txtMainCommand" HorizontalAlignment="Left" Height="132" Margin="10,200,0,0" TextWrapping="Wrap" Text="Get-Mailbox command to be run..." VerticalAlignment="Top" Width="338" IsReadOnly="True"/>
-        <Rectangle HorizontalAlignment="Left" Height="26" Margin="353,400,0,0" VerticalAlignment="Top" Width="232">
+        <Rectangle HorizontalAlignment="Left" Height="26" Margin="353,440,0,0" VerticalAlignment="Top" Width="232">
             <Rectangle.Stroke>
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
             </Rectangle.Stroke>
         </Rectangle>
-        <Rectangle HorizontalAlignment="Left" Height="26" Margin="590,400,0,0" VerticalAlignment="Top" Width="173">
+        <Rectangle HorizontalAlignment="Left" Height="26" Margin="353,471,0,0" VerticalAlignment="Top" Width="174">
             <Rectangle.Stroke>
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
             </Rectangle.Stroke>
@@ -701,6 +702,13 @@ $inputXML = @"
         <CheckBox x:Name="chkUnlimited" Content="Unlimited" HorizontalAlignment="Left" Margin="223,126,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblAbout" Content="." HorizontalAlignment="Left" Margin="772,10,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="chkArbitrationOnly" Content="Arbitration only" HorizontalAlignment="Left" Margin="10,149,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btnClipboard" Content="Copy all above items to clipboard" HorizontalAlignment="Left" Margin="590,442,0,0" VerticalAlignment="Top" Width="202" IsEnabled="False" Height="22">
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
+        <Label Content="#1 - Choose what you wish to see about the selected" HorizontalAlignment="Left" Margin="353,508,0,0" VerticalAlignment="Top"/>
+        <Label Content="#2 - Run the above selected action on selected items" HorizontalAlignment="Left" Margin="353,570,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
@@ -740,6 +748,12 @@ $wpf.$FormName.Icon = $bitmap
 $wpf.btnRun.add_Click({
     Working-Label
     Get-Mailboxes
+    BOOKMARK
+    if (($wpf.lblNbItemsInGrid.Content) -eq 0){
+        $wpf.btnClipboard.IsEnabled = $false
+    } Else {
+        $wpf.btnClipboard.IsEnabled = $true
+    }
     Ready-Label
 })
 
@@ -748,6 +762,15 @@ $wpf.btnAction.add_Click({
     Run-Action
     Ready-Label
 })
+
+$wpf.btnClipboard.add_Click({
+    $CSVClip = $wpf.GridView.ItemsSource | ConvertTo-CSV -NoTypeInformation
+    $CSVClip | clip.exe
+    $title = "Copied !"
+    $msg = "Data copied to the clipboard ! `n`rUse CTRL+V on Notepad or on Excel !"
+    [System.Windows.MessageBox]::Show($msg,$title, "OK","Asterisk")
+})
+
 # End of Buttons region
 #endregion
 
@@ -760,7 +783,7 @@ $Wpf.$FormName.Add_Loaded({
 })
 #Things to load when the WPF form is rendered aka drawn on screen
 $Wpf.$FormName.Add_ContentRendered({
-
+    write-host "rendered"
 })
 $Wpf.$FormName.add_Closing({
     $msg = "bye bye !"
