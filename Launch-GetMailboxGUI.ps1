@@ -1,5 +1,6 @@
-$Version = "0.95"
+$Version = "0.96"
 <#Version History
+v0.96 - added icon, made window a bit bigger
 v0.95 - fixed Arbitration mailbox SIR and Quota functions
 v0.92 - Added Arbitration mailbox check box
 v0.91 - Added ability to sort each columns in List quota action ...
@@ -652,9 +653,9 @@ $inputXML = @"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GridView_WPF"
         mc:Ignorable="d"
-        Title="Search Mailboxes" Height="535.64" Width="800" ResizeMode="NoResize">
+        Title="Search Mailboxes" Height="535.64" Width="1026.5" ResizeMode="NoResize">
     <Grid>
-        <DataGrid x:Name="GridView" HorizontalAlignment="Left" Height="385" Margin="353,10,0,0" VerticalAlignment="Top" Width="410"/>
+        <DataGrid x:Name="GridView" HorizontalAlignment="Left" Height="385" Margin="353,10,0,0" VerticalAlignment="Top" Width="641"/>
         <TextBox x:Name="txtMailboxString" HorizontalAlignment="Left" Height="23" Margin="10,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="338"/>
         <Label Content="Search for mailbox (substring of alias, e-mail address, &#xD;&#xA;display name, ...)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,11,0,0" Height="51" Width="302"/>
         <Button x:Name="btnRun" Content="Search" HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top" Width="75" Height="32">
@@ -662,14 +663,14 @@ $inputXML = @"
                 <DropShadowEffect/>
             </Button.Effect>
         </Button>
-        <Label x:Name="lblStatus" Content="Please start a search..." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,471,0,0" Width="784" FontStyle="Italic" FontWeight="Bold">
+        <Label x:Name="lblStatus" Content="Please start a search..." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,471,0,0" Width="1010" FontStyle="Italic" FontWeight="Bold">
         </Label>
-        <Button x:Name="btnAction" Content="Action on selected" Margin="353,430,250,41" IsEnabled="False">
+        <Button x:Name="btnAction" Content="Action on selected" Margin="353,431,491.5,40" IsEnabled="False">
             <Button.Effect>
                 <DropShadowEffect/>
             </Button.Effect>
         </Button>
-        <ComboBox x:Name="comboSelectAction" HorizontalAlignment="Left" Margin="549,431,0,0" VerticalAlignment="Top" Width="214" Height="35" SelectedIndex="0" IsEnabled="False" TextOptions.TextFormattingMode="Display" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+        <ComboBox x:Name="comboSelectAction" HorizontalAlignment="Left" Margin="549,431,0,0" VerticalAlignment="Top" Width="214" Height="36" SelectedIndex="0" IsEnabled="False" TextOptions.TextFormattingMode="Display" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
             <ComboBox.Effect>
                 <DropShadowEffect/>
             </ComboBox.Effect>
@@ -715,6 +716,17 @@ $namedNodes | ForEach-Object {$wpf.Add($_.Name, $tempform.FindName($_.Name))}
 #Get the form name to be used as parameter in functions external to form...
 $FormName = $NamedNodes[0].Name
 
+$Base64icon = "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"
+
+# Create a streaming image by streaming the base64 string to a bitmap streamsource
+$bitmap = New-Object System.Windows.Media.Imaging.BitmapImage
+$bitmap.BeginInit()
+$bitmap.StreamSource = [System.IO.MemoryStream][System.Convert]::FromBase64String($Base64icon)
+$bitmap.EndInit()
+$bitmap.Freeze()
+ 
+# This is the icon in the upper left hand corner of the app
+$wpf.$FormName.Icon = $bitmap
 #========================================================
 # END of WPF form definition and load controls
 #endregion
