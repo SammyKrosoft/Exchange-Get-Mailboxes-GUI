@@ -666,12 +666,12 @@ $inputXML = @"
         </Button>
         <Label x:Name="lblStatus" Content="Ready !" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,658,0,0" Width="1010" FontStyle="Italic" FontWeight="Bold">
         </Label>
-        <Button x:Name="btnAction" Content="Run on selected" Margin="353,596,0,0" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Button x:Name="btnAction" Content="Run on selected" Margin="360,596,0,0" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Button.Effect>
                 <DropShadowEffect/>
             </Button.Effect>
         </Button>
-        <ComboBox x:Name="comboSelectAction" HorizontalAlignment="Left" Margin="353,534,0,0" VerticalAlignment="Top" Height="30" SelectedIndex="0" IsEnabled="False" TextOptions.TextFormattingMode="Display">
+        <ComboBox x:Name="comboSelectAction" HorizontalAlignment="Left" Margin="360,534,0,0" VerticalAlignment="Top" Height="30" SelectedIndex="0" IsEnabled="False" TextOptions.TextFormattingMode="Display">
             <ComboBox.Effect>
                 <DropShadowEffect/>
             </ComboBox.Effect>
@@ -709,6 +709,7 @@ $inputXML = @"
         </Button>
         <Label Content="#1 - Choose what you wish to see about the selected" HorizontalAlignment="Left" Margin="353,508,0,0" VerticalAlignment="Top"/>
         <Label Content="#2 - Run the above selected action on selected items" HorizontalAlignment="Left" Margin="353,570,0,0" VerticalAlignment="Top"/>
+        <Border BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1" HorizontalAlignment="Left" Height="126" Margin="353,508,0,0" VerticalAlignment="Top" Width="304"/>
 
     </Grid>
 </Window>
