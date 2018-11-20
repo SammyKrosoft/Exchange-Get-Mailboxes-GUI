@@ -749,7 +749,6 @@ $wpf.$FormName.Icon = $bitmap
 $wpf.btnRun.add_Click({
     Working-Label
     Get-Mailboxes
-    BOOKMARK
     if (($wpf.lblNbItemsInGrid.Content) -eq 0){
         $wpf.btnClipboard.IsEnabled = $false
     } Else {
