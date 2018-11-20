@@ -700,7 +700,7 @@ $inputXML = @"
         </Rectangle>
         <Label Content="The command run when clicking on the Search button is:" HorizontalAlignment="Left" Margin="10,174,0,0" VerticalAlignment="Top" Width="338" FontStyle="Italic"/>
         <CheckBox x:Name="chkUnlimited" Content="Unlimited" HorizontalAlignment="Left" Margin="223,126,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="lblAbout" Content="." HorizontalAlignment="Left" Margin="772,10,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblAbout" Content="." HorizontalAlignment="Left" Margin="1008,0,0,0" VerticalAlignment="Top" Height="22"/>
         <CheckBox x:Name="chkArbitrationOnly" Content="Arbitration only" HorizontalAlignment="Left" Margin="10,149,0,0" VerticalAlignment="Top"/>
         <Button x:Name="btnClipboard" Content="Copy all above items to clipboard" HorizontalAlignment="Left" Margin="590,442,0,0" VerticalAlignment="Top" Width="202" IsEnabled="False" Height="22">
             <Button.Effect>
