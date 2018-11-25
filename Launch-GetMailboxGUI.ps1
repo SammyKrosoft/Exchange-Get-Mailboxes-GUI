@@ -533,9 +533,9 @@ Function Update-MainCommandLine {
         }
         $chkIncludeDiscovery = $false
         If ($chkIncludeDiscovery){
-            $commandLine = 'Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -ErrorAction Stop | Select Name,Alias,DisplayName,primarySMTPAddress,Location,ServerName,Database,@{Name="Region";Expression={$_.Database.SubString(0,3)}}'
+            $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring | Select Name,Alias,DisplayName,primarySMTPAddress,ServerName,Database"
         } Else {
-            $commandLine = 'Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -Filter {RecipientTypeDetails -ne "DiscoveryMailbox"} -ErrorAction Stop | Select Name,Alias,DisplayName,primarySMTPAddress,Location,ServerName,Database,@{Name="Region";Expression={$_.Database.SubString(0,3)}}'
+            $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -Filter {RecipientTypeDetails -ne `"DiscoveryMailbox`"} | Select Name,Alias,DisplayName,primarySMTPAddress,ServerName,Database"
         }
     }
     $wpf.txtMainCommand.Text = $CommandLine
@@ -612,7 +612,7 @@ Function Get-Mailboxes {
             }
             $NewMailboxesObj += $objtemp
         }
-        $Mailboxes =  $NewMailboxesObj #| Select Name,Alias,DisplayName,primarySMTPAddress,Location,ServerName,Database
+        $Mailboxes =  $NewMailboxesObj | Select Name,Alias,DisplayName,primarySMTPAddress,Location,ServerName,Database
         #Stopping stopwatch
         $stopwatch.Stop()
         $msg = "`n`nInstruction took $([math]::round($($StopWatch.Elapsed.TotalSeconds),2)) seconds to retrieve $($Mailboxes.count) mailboxes..."
