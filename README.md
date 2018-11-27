@@ -10,10 +10,7 @@ Here's the principle used to create this Powershell application using WPF:
 * and finally I wrote the functions behind the form that I want to run when the form loads, when we click the buttons, when we check or uncheck the checkboxes, when we change the text in text boxes, or when we select items from datagrids => for code to execute when the user interacts with Windows WPF forms, we must use the WPF form object's "events" (add_click, add_textChanged, add_loaded, add_closing, etc...) => you can retrieve Windows WPF form objects on the MSDN, or simply on Visual Studio 2017 when you design your form (switch from object properties to the object events to view all available events for a selected object)
 
 It's pretty straightforward to write PowerShell WPF applications if we have in mind how to structure the program:
-1- design the form in Visual Studio 2017 (or manually but it's too complicated for me, hence the choice to use VS)
-2- paste the generated XAML code in your PowerShell program, on a placeholder where you pre-populated a PowerShell code to parse the XAML code to generate PowerShell-understandable objects
-2- write the functions you want to execute behind the form
-3- write the form events (these are similar to small functions, to tell the form what to do when user clicks a button, or when user start typing text in boxes, or when use checks a box, or selects an item in a datagrid or in a list box, etc..) and call the functions from these form events.
+![screenshot0](https://github.com/SammyKrosoft/Code-Snippet-WPF-and-PowerShell/blob/master/DocResources/How-o-CreatePowerShellWPFApp.jpg)
 
 
 ## Important notes
