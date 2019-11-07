@@ -1,40 +1,15 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0
+.VERSION 1.1.1
 
-.GUID c5c9ef8e-ff4b-479b-b277-2a621eaf7f02
+.GUID b5592ee1-dc40-4e2e-aa14-a819b595ceb4
 
-.DESCRIPTION 
+.AUTHOR sammy
 
-.AUTHOR SammyKrosoft aka Sam Drey
-
-.COMPANYNAME SCO Sam Corp Ottawa
-
-.COPYRIGHT 
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-#>
-
-<#
+.DESCRIPTION This is a script to demonstrate the usage of Graphical User Interface (GUI) with PowerShell. Just launch the script, and click on the buttons to get your mailbox information, whether you're On-Premises, on a Hybrid mode, or fully on the Cloud.
 
 .NOTES
-    This is a script to demonstrate the usage of Graphical User Interface (GUI) with PowerShell.
-
     This script requires:
         - PowerShell v3 minium
         - Exchange Management Tools (or being logged on Exchange Online on the current PowerShell session)
@@ -43,10 +18,37 @@
 
 .LINK
  https://github.com/SammyKrosoft/Exchange-Get-Mailboxes-GUI
+
+.COMPANYNAME SCO - Sam Corp Ottawa
+
+.COPYRIGHT Free to copy, inspire, etc...
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI https://github.com/SammyKrosoft/Exchange-Get-Mailboxes-GUI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
 #>
 
-$Version = "1.0"
+
+$Version = "1.1.1"
 <#Version History
+v1.1.1 - Fixed RecipientTypeDetails : forgot to select REcipientTypeDetails on the main  Get-Mailbox
+v1.1.0 - Fixed test whether mailbox is OnPrem or on the Cloud : forgot to select OrganizationalUnit on the main Get-Mailbox
+v1.0.5 - tested different comments for PSScriptInfo
 v1.00 - added PSSCriptInfo for publishing on PSGallery
 v0.97 - made window bigger - added Copy to Clipboard button for mailboxes list - added ServerName and database info
 v0.96 - added icon, made window a bit bigger
@@ -581,9 +583,9 @@ Function Update-MainCommandLine {
         }
         $chkIncludeDiscovery = $false
         If ($chkIncludeDiscovery){
-            $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring | Select Name,Alias,DisplayName,primarySMTPAddress,ServerName,Database"
+            $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -ErrorAction Stop| Select Name,Alias,DisplayName,primarySMTPAddress,ServerName,Database,RecipientTypeDetails,OrganizationalUnit"
         } Else {
-            $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -Filter {RecipientTypeDetails -ne `"DiscoveryMailbox`"} | Select Name,Alias,DisplayName,primarySMTPAddress,ServerName,Database"
+            $commandLine = "Get-Mailbox -ResultSize $ResultSize -Identity $SearchSubstring -Filter {RecipientTypeDetails -ne `"DiscoveryMailbox`"} -ErrorAction Stop| Select Name,Alias,DisplayName,primarySMTPAddress,ServerName,Database,REcipientTypeDetails,OrganizationalUnit"
         }
     }
     $wpf.txtMainCommand.Text = $CommandLine
@@ -652,6 +654,7 @@ Function Get-Mailboxes {
         #Invoking the command line and storing in a variable
         $Mailboxes = invoke-expression $CommandLine
         $NewMailboxesObj = @()
+
         Foreach ($objTemp in $Mailboxes){
             If ($($objTemp.OrganizationalUnit) -match "prod.outlook.com"){
                 $objtemp | Add-Member -NotePropertyName Location -NotePropertyValue "Cloud"
@@ -660,6 +663,7 @@ Function Get-Mailboxes {
             }
             $NewMailboxesObj += $objtemp
         }
+
         $Mailboxes =  $NewMailboxesObj | Select Name,Alias,DisplayName,primarySMTPAddress, RecipientTypeDetails,Location,ServerName,Database
         #Stopping stopwatch
         $stopwatch.Stop()
