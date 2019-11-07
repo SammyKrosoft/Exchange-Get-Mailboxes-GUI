@@ -1,6 +1,14 @@
 # Exchange-Get-Mailboxes-GUI
 Here is a GUI to get mailboxes information in an Exchange 2010, 2013, 2016, 2019 and/or Exchange Online (O365) environments.
 
+This GUI script is also present in the PowerShell Gallery - download it and make it available using 
+
+```powershell
+Install-Script -Name Launch-GetMailboxGUI
+```
+
+[Get-Mailbox GUI on PSGallery](https://www.powershellgallery.com/packages/Launch-GetMailboxGUI/1.1.1)
+
 ## Principle
 For this GUI, I designed the interface using Windows Presentation Foundation, which is the next generation of Windows Forms, and which enables anyone to design Windows interfaces for underlying programs, to help users to get the most from computer programs.
 
