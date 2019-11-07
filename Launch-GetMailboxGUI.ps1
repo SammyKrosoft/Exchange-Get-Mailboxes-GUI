@@ -1,5 +1,53 @@
-$Version = "0.97"
+
+<#PSScriptInfo
+
+.VERSION 1.0
+
+.GUID c5c9ef8e-ff4b-479b-b277-2a621eaf7f02
+
+.DESCRIPTION 
+
+.AUTHOR SammyKrosoft aka Sam Drey
+
+.COMPANYNAME SCO Sam Corp Ottawa
+
+.COPYRIGHT 
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+#>
+
+<#
+
+.NOTES
+    This is a script to demonstrate the usage of Graphical User Interface (GUI) with PowerShell.
+
+    This script requires:
+        - PowerShell v3 minium
+        - Exchange Management Tools (or being logged on Exchange Online on the current PowerShell session)
+    
+    These above dependencies are checked when the script launches.
+
+.LINK
+ https://github.com/SammyKrosoft/Exchange-Get-Mailboxes-GUI
+#>
+
+$Version = "1.0"
 <#Version History
+v1.00 - added PSSCriptInfo for publishing on PSGallery
 v0.97 - made window bigger - added Copy to Clipboard button for mailboxes list - added ServerName and database info
 v0.96 - added icon, made window a bit bigger
 v0.95 - fixed Arbitration mailbox SIR and Quota functions
@@ -788,10 +836,12 @@ $Wpf.$FormName.Add_Loaded({
 $Wpf.$FormName.Add_ContentRendered({
     write-host "rendered"
 })
+
 $Wpf.$FormName.add_Closing({
     $msg = "bye bye !"
     write-host $msg
 })
+
 $wpf.lblAbout.Add_MouseLeftButtonDown($lblabout_Click)
 
 # End of load, draw and closing form events
